@@ -17,11 +17,9 @@
   "files": [
     "src/*"
   ],
-  "dependencies": {
-    "@architect/eslint-config": "^2.0.1"
-  },
   "devDependencies": {
     "@architect/architect": "^10.0.5",
+    "@architect/eslint-config": "^2.0.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.10.0",
     "proxyquire": "^2.1.3",
