@@ -2,9 +2,9 @@ const fs = require('fs/promises')
 const path = require('path')
 const { updater } = require('@architect/utils')
 
-const update = updater('named-routes')
-
 module.exports = async function buildManifest ({ arc, inventory }) {
+  const update = updater('named-routes')
+
   update.start('Build route manifest...')
 
   const namedRoutes = arc.http
