@@ -4,7 +4,7 @@
   "description": "Named routes for Architect HTTP functions",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . --fix",
+    "lint": "eslint test/integration test/unit index.js route.js --fix",
     "test": "npm run lint && npm run test:unit && npm run test:integration",
     "test:unit": "cross-env tape 'test/unit/**/*-test.js' | tap-spec",
     "test:integration": "cross-env tape 'test/integration/**/*-test.js' | tap-spec"
