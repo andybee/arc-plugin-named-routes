@@ -1,6 +1,6 @@
 {
   "name": "arc-plugin-named-routes",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Named routes for Architect HTTP functions",
   "main": "index.js",
   "scripts": {
