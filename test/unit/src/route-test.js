@@ -13,7 +13,7 @@ const fs = {
     })
   }
 }
-const route = proxyquire('../../../src/route', { fs })
+const route = proxyquire('../../../route', { fs })
 
 test('Set up env', t => {
   t.plan(1)

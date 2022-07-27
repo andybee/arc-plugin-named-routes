@@ -2,7 +2,7 @@ const fs = require('fs/promises')
 const path = require('path')
 const { updater } = require('@architect/utils')
 
-module.exports = async function buildManifest ({ arc, inventory }) {
+async function buildManifest ({ arc, inventory }) {
   const update = updater('named-routes')
 
   update.start('Build route manifest...')
@@ -20,4 +20,13 @@ module.exports = async function buildManifest ({ arc, inventory }) {
   await fs.writeFile(manifestPath, JSON.stringify(namedRoutes))
 
   update.done('Route manifest built')
+}
+
+module.exports = {
+  sandbox: {
+    start: buildManifest,
+  },
+  deploy: {
+    start: buildManifest,
+  },
 }

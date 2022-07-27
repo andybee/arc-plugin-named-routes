@@ -32,7 +32,7 @@ Import the `route()` helper in to an HTTP function Lambda to use named routes:
 
 ```js
 // src/http/get-index/index.js
-const { route } = require('arc-plugin-named-routes')
+const route = require('arc-plugin-named-routes/route')
 
 exports.handler = async () => ({
   statusCode: 200,
