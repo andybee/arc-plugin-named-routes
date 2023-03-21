@@ -119,7 +119,7 @@ route('foo')
 
 route('bar')
 
-// returns: /bar
+// returns: /foo
 ```
 
 ## Configuration
