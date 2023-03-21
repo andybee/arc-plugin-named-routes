@@ -5,7 +5,7 @@ const { updater } = require('@architect/utils')
 async function buildManifest ({ arc, inventory }) {
   const update = updater('named-routes')
 
-  update.start('Build route manifest...')
+  update.start('Building route manifest...')
 
   const namedRoutes = arc.http
     .filter(route => !Array.isArray(route))
