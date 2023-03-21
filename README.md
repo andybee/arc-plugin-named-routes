@@ -77,6 +77,32 @@ route('foo', { id: 123, bar: 'bar' })
 // returns: /foo/123?bar=bar
 ```
 
+You can use the same name for two or more routes as long as each route has a unique method. The helper function will default to `GET`. You can optionally supply an alternative method as the first argument:
+
+```arc
+@http
+/foo/:id
+  method get
+  name foo
+/bar
+  method post
+  name foo
+```
+
+```js
+route('foo', { id: 123 })
+
+// returns: /foo/123
+
+route('get', 'foo', { id: 123 })
+
+// returns: /foo/123
+
+route('post', 'foo')
+
+// returns: /bar
+```
+
 ## Configuration
 
 There is currently no additional configuration for this plugin.

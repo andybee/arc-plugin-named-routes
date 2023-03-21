@@ -24,7 +24,19 @@ test('Manifest created', async t => {
   t.plan(2)
   t.ok(existsSync(manifestPath), 'Found route manifest')
   const manifest = readFileSync(manifestPath).toString()
-  t.deepEqual(manifest, JSON.stringify({ a: '/a', b: '/b/:id' }), 'Manifest contains expected entries')
+  const expectedManifestContent = {
+    get: {
+      a: '/a',
+      b: '/b/:id',
+    },
+    post: {
+      a: '/a',
+    },
+    put: {
+      b: '/c/:id',
+    },
+  }
+  t.deepEqual(manifest, JSON.stringify(expectedManifestContent), 'Manifest contains expected entries')
 })
 
 test('Shut down Sandbox', async t => {

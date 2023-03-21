@@ -8,8 +8,16 @@ const fs = {
       throw new Error()
     }
     return JSON.stringify({
-      'a': '/a',
-      'b': '/b/:id',
+      get: {
+        a: '/a',
+        b: '/b/:id',
+      },
+      post: {
+        a: '/a',
+      },
+      put: {
+        b: '/c/:id',
+      },
     })
   }
 }
@@ -21,7 +29,7 @@ test('Set up env', t => {
 })
 
 test('Helper returns correct path', t => {
-  t.plan(4)
+  t.plan(6)
   manifestExists = true
   let path = route('a')
   t.equal(path, '/a', 'Returned path')
@@ -31,6 +39,10 @@ test('Helper returns correct path', t => {
   t.equal(path, '/b/123', 'Returned path with parameter value')
   path = route('b', { id: 123, query: 'test' })
   t.equal(path, '/b/123?query=test', 'Returned path with parameter value and query string')
+  path = route('post', 'a')
+  t.equal(path, '/a', 'Returned path with method')
+  path = route('put', 'b', { id: 123 })
+  t.equal(path, '/c/123', 'Returned path with method and parameter value')
 })
 
 test('Throws if manifest not found', t => {

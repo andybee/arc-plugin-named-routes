@@ -10,9 +10,14 @@ async function buildManifest ({ arc, inventory }) {
   const namedRoutes = arc.http
     .filter(route => !Array.isArray(route))
     .reduce((routes, route) => {
-      const [ path, { name } ] = Object.entries(route)[0]
-      if (name === undefined) return routes
-      return { ...routes, [name]: path }
+      const [ path, { method: rawMethod, name } ] = Object.entries(route)[0]
+      const method = rawMethod.toLowerCase()
+
+      if (routes[method]?.[name] !== undefined) {
+        throw new TypeError(`Duplicate route name ("${name}") + method (${method})`)
+      }
+
+      return { ...routes, [method]: { ...routes[method], [name]: path } }
     }, {})
 
   const manifestPath = path.resolve(inventory.inv._project.cwd, 'src/shared/routes.json')

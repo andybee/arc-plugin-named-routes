@@ -2,7 +2,30 @@ const { join } = require('path')
 const { readFileSync } = require('fs')
 const { stringify } = require('querystring')
 
-module.exports = function route (name, args = {}) {
+module.exports = function route (...args) {
+  let name
+  let method
+  let params = {}
+
+  switch (args.length) {
+  case 1:
+    [ name ] = args
+    break
+  case 2:
+    if (typeof args[1] === 'string') {
+      [ method, name ] = args
+    }
+    else {
+      [ name, params ] = args
+    }
+    break
+  case 3:
+    [ method, name, params ] = args
+    break
+  default:
+    throw new TypeError('Invalid number of arguments')
+  }
+
   const manifest = join(process.cwd(), 'node_modules', '@architect', 'shared', 'routes.json')
   let routes
   try {
@@ -12,15 +35,15 @@ module.exports = function route (name, args = {}) {
     routes = {}
   }
 
-  const rawPath = routes[name]
+  const rawPath = routes[method || 'get']?.[name]
   if (rawPath === undefined) {
-    throw new ReferenceError(`No route named "${name}"`)
+    throw new ReferenceError(`No route named "${name}"${method !== undefined ? ` for method ${method.toUpperCase()}` : ''}`)
   }
 
-  let query = args
+  let query = params
   const path = rawPath.replace(/:[^/]+/g, (match) => {
     const matchedKey = match.substring(1)
-    const value = args[matchedKey]
+    const value = params[matchedKey]
     if (value === undefined) throw new ReferenceError(`No value for parameter "${matchedKey}" in "${rawPath}"`)
     query = Object.keys(query)
       .filter((key) => key !== matchedKey)
