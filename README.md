@@ -103,6 +103,25 @@ route('post', 'foo')
 // returns: /bar
 ```
 
+When refactoring routes, to ease migration you can define multiple names for a single route (assuming no duplication, as above):
+
+```arc
+@http
+/foo
+  method get
+  name foo bar
+```
+
+```js
+route('foo')
+
+// returns: /foo
+
+route('bar')
+
+// returns: /bar
+```
+
 ## Configuration
 
 There is currently no additional configuration for this plugin.

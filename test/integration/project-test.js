@@ -28,6 +28,9 @@ test('Manifest created', async t => {
     get: {
       a: '/a',
       b: '/b/:id',
+      c: '/multi',
+      d: '/multi',
+      e: '/multi',
     },
     post: {
       a: '/a',

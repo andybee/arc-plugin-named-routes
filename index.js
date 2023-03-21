@@ -10,14 +10,19 @@ async function buildManifest ({ arc, inventory }) {
   const namedRoutes = arc.http
     .filter(route => !Array.isArray(route))
     .reduce((routes, route) => {
-      const [ path, { method: rawMethod, name } ] = Object.entries(route)[0]
+      const [ path, { method: rawMethod, name: nameOrNames } ] = Object.entries(route)[0]
       const method = rawMethod.toLowerCase()
 
-      if (routes[method]?.[name] !== undefined) {
-        throw new TypeError(`Duplicate route name ("${name}") + method (${method})`)
-      }
+      const names = Array.isArray(nameOrNames) ? nameOrNames : [ nameOrNames ]
+      const additions = {}
+      names.forEach((name) => {
+        if (routes[method]?.[name] !== undefined) {
+          throw new TypeError(`Duplicate route name ("${name}") + method (${method})`)
+        }
+        additions[name] = path
+      })
 
-      return { ...routes, [method]: { ...routes[method], [name]: path } }
+      return { ...routes, [method]: { ...routes[method], ...additions } }
     }, {})
 
   const manifestPath = path.resolve(inventory.inv._project.cwd, 'src/shared/routes.json')

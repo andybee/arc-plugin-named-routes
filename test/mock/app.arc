@@ -15,6 +15,9 @@ get / # tests that a route without any meta doesn't break the plugin
 /c/:id
   method put
   name b # same name as /b/:id but different path
+/multi
+  method get
+  name c d e
 
 @plugins
 named-routes
