@@ -29,7 +29,7 @@ test('Set up env', t => {
 })
 
 test('Helper returns correct path', t => {
-  t.plan(6)
+  t.plan(7)
   manifestExists = true
   let path = route('a')
   t.equal(path, '/a', 'Returned path')
@@ -43,6 +43,8 @@ test('Helper returns correct path', t => {
   t.equal(path, '/a', 'Returned path with method')
   path = route('put', 'b', { id: 123 })
   t.equal(path, '/c/123', 'Returned path with method and parameter value')
+  path = route('GET', 'b', { id: 123 })
+  t.equal(path, '/b/123', 'Returns path with alternatively cased method')
 })
 
 test('Throws if manifest not found', t => {

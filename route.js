@@ -35,7 +35,7 @@ module.exports = function route (...args) {
     routes = {}
   }
 
-  const rawPath = routes[method || 'get']?.[name]
+  const rawPath = routes[method?.toLowerCase() || 'get']?.[name]
   if (rawPath === undefined) {
     throw new ReferenceError(`No route named "${name}"${method !== undefined ? ` for method ${method.toUpperCase()}` : ''}`)
   }
