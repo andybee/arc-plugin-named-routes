@@ -7,35 +7,48 @@ async function buildManifest ({ arc, inventory }) {
 
   update.start('Building route manifest...')
 
-  const namedRoutes = arc.http
+  // build the manifest object
+  const manifest = arc.http
+    // remove routes defined as an array (without params, cannot have names)
     .filter(route => !Array.isArray(route))
-    .reduce((routes, route) => {
-      const [ path, { method: rawMethod, name: nameOrNames } ] = Object.entries(route)[0]
-      const method = rawMethod.toLowerCase()
+    // convert key/value entry in to an object that's easier to work with
+    .map(route => ({ ...Object.entries(route)[0][1], path: Object.entries(route)[0][0] }))
+    // ignore routes with no name
+    .filter(({ name }) => name !== undefined)
+    // reduce the routes in to an object
+    .reduce(
+      (routes, route) => {
+        const { path, method: rawMethod, name: nameOrNames } = route
+        const names = Array.isArray(nameOrNames) ? nameOrNames : [ nameOrNames ]
+        const method = rawMethod.toLowerCase() // ensure methods are case insensitive
+        const additions = names.reduce(
+          (accumulator, name) => {
+            if (routes[method]?.[name] !== undefined) {
+              throw new TypeError(`Duplicate route name ("${name}") + method (${method})`)
+            }
+            return { ...accumulator, [name]: path }
+          },
+          {},
+        )
+        return { ...routes, [method]: { ...routes[method], ...additions } }
+      },
+      {},
+    )
 
-      const names = Array.isArray(nameOrNames) ? nameOrNames : [ nameOrNames ]
-      const additions = {}
-      names.forEach((name) => {
-        if (routes[method]?.[name] !== undefined) {
-          throw new TypeError(`Duplicate route name ("${name}") + method (${method})`)
-        }
-        additions[name] = path
-      })
-
-      return { ...routes, [method]: { ...routes[method], ...additions } }
-    }, {})
-
+  // write the manifest to file in /shared directory
   const manifestPath = path.resolve(inventory.inv._project.cwd, 'src/shared/routes.json')
   await fs.mkdir(path.dirname(manifestPath), { recursive: true })
-  await fs.writeFile(manifestPath, JSON.stringify(namedRoutes))
+  await fs.writeFile(manifestPath, JSON.stringify(manifest))
 
   update.done('Route manifest built')
 }
 
 module.exports = {
+  // run on Sandbox (re)start, also capture updates to app.arc
   sandbox: {
     start: buildManifest,
   },
+  // run prior to deployment
   deploy: {
     start: buildManifest,
   },

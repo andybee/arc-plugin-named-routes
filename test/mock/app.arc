@@ -18,6 +18,10 @@ get / # tests that a route without any meta doesn't break the plugin
 /multi
   method get
   name c d e
+/unnamed
+  method get
+/unnamed
+  method post
 
 @plugins
 named-routes
