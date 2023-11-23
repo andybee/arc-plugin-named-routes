@@ -45,7 +45,15 @@ async function buildManifest ({ arc, inventory, stage = 'testing' }) {
     manifest.any = {
       ...manifest.any,
       ...Object.entries(externalStageRoutes).reduce(
-        (routes, [ key, value ]) => ({ ...routes, [`${externalPrefix}${key}`]: value }),
+        (routes, [ key, value ]) => {
+          try {
+            new URL(value)
+          }
+          catch {
+            throw new TypeError(`Invalid URL "${value}" for external route "${key}"`)
+          }
+          return { ...routes, [`${externalPrefix}${key}`]: value }
+        },
         {},
       ),
     }
