@@ -35,9 +35,14 @@ module.exports = function route (...args) {
     routes = {}
   }
 
-  const rawPath = routes[method?.toLowerCase() || 'get']?.[name] || routes.any?.[name]
+  let url
+  let rawPath = routes[method?.toLowerCase() || 'get']?.[name] || routes.any?.[name]
   if (rawPath === undefined) {
     throw new ReferenceError(`No route named "${name}"${method !== undefined ? ` for method ${method.toUpperCase()}` : ''}`)
+  }
+  if (name.startsWith('external.')) {
+    url = new URL(rawPath)
+    rawPath = url.pathname
   }
 
   let query = params
@@ -50,6 +55,14 @@ module.exports = function route (...args) {
       .reduce((obj, key) => ({ ...obj, [key]: query[key] }), {})
     return value
   })
+
+  if (name.startsWith('external.')) {
+    url.pathname = path
+    url.search = Object.keys(query).length > 0
+      ? `?${stringify(query)}`
+      : ''
+    return url.toString()
+  }
 
   return `${path}${Object.keys(query).length > 0
     ? `?${stringify(query)}`
