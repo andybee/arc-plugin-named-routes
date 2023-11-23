@@ -2,7 +2,9 @@ const fs = require('fs/promises')
 const path = require('path')
 const { updater } = require('@architect/utils')
 
-async function buildManifest ({ arc, inventory }) {
+const externalPrefix = 'external.'
+
+async function buildManifest ({ arc, inventory, stage = 'testing' }) {
   const update = updater('named-routes')
 
   update.start('Building route manifest...')
@@ -20,6 +22,9 @@ async function buildManifest ({ arc, inventory }) {
       (routes, route) => {
         const { path, method: rawMethod, name: nameOrNames } = route
         const names = Array.isArray(nameOrNames) ? nameOrNames : [ nameOrNames ]
+        if (names.some(name => name.startsWith(externalPrefix))) {
+          throw new Error('Cannot define internal named route with `${externalPrefix}` prefix')
+        }
         const method = rawMethod.toLowerCase() // ensure methods are case insensitive
         const additions = names.reduce(
           (accumulator, name) => {
@@ -34,6 +39,17 @@ async function buildManifest ({ arc, inventory }) {
       },
       {},
     )
+
+  // append any external routes
+  arc['named-routes']?.forEach(({ [stage]: externalStageRoutes = {} }) => {
+    manifest.any = {
+      ...manifest.any,
+      ...Object.entries(externalStageRoutes).reduce(
+        (routes, [ key, value ]) => ({ ...routes, [`${externalPrefix}${key}`]: value }),
+        {},
+      ),
+    }
+  })
 
   // write the manifest to file in /shared directory
   const manifestPath = path.resolve(inventory.inv._project.cwd, 'src/shared/routes.json')

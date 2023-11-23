@@ -77,7 +77,7 @@ route('foo', { id: 123, bar: 'bar' })
 // returns: /foo/123?bar=bar
 ```
 
-You can use the same name for two or more routes as long as each route has a unique method. The helper function will default to `GET`. You can optionally supply an alternative method as the first argument:
+You can use the same name for two or more routes as long as each route has a unique method. The helper function will default to `GET`, then `ANY`. You can optionally supply an alternative method as the first argument:
 
 ```arc
 @http
@@ -124,4 +124,22 @@ route('bar')
 
 ## Configuration
 
-There is currently no additional configuration for this plugin.
+If you wish to use the plugin for routes that are external to the current application, you can configure them using the `@named-routes` pragma in `app.arc`:
+
+```arc
+@named-routes
+testing
+  foo http://localhost:9876/foo/:id
+staging
+  foo https://example.org/foo/:id
+```
+
+Routes are defined against a stage. You can use path parameters in the usual way.
+
+External routes will be interpreted as `ANY` method routes and prefixed with `external.`:
+
+```js
+route('external.foo', { id: 123 })
+
+// returns: http://localhost:9876/foo/123 in testing and https://example.org/foo/123 in staging
+```

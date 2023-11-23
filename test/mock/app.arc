@@ -22,7 +22,18 @@ get / # tests that a route without any meta doesn't break the plugin
   method get
 /unnamed
   method post
+/any
+  method any
+  name f
 
 @plugins
 named-routes
   src ../..
+
+@named-routes
+testing
+  foo http://localhost:3333/foo/:id
+staging
+  foo https://staging.mydomain.com/foo/:id
+production
+  foo https://staging.mydomain.com/foo/:id

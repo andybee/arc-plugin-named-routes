@@ -38,6 +38,10 @@ test('Manifest created', async t => {
     put: {
       b: '/c/:id',
     },
+    any: {
+      f: '/any',
+      'external.foo': 'http://localhost:3333/foo/:id',
+    },
   }
   t.deepEqual(manifest, JSON.stringify(expectedManifestContent), 'Manifest contains expected entries')
 })

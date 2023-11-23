@@ -18,6 +18,9 @@ const fs = {
       put: {
         b: '/c/:id',
       },
+      any: {
+        c: '/c',
+      },
     })
   }
 }
@@ -29,7 +32,7 @@ test('Set up env', t => {
 })
 
 test('Helper returns correct path', t => {
-  t.plan(7)
+  t.plan(8)
   manifestExists = true
   let path = route('a')
   t.equal(path, '/a', 'Returned path')
@@ -45,6 +48,8 @@ test('Helper returns correct path', t => {
   t.equal(path, '/c/123', 'Returned path with method and parameter value')
   path = route('GET', 'b', { id: 123 })
   t.equal(path, '/b/123', 'Returns path with alternatively cased method')
+  path = route('c')
+  t.equal(path, '/c', 'Returns ANY match by default if no GET match')
 })
 
 test('Throws if manifest not found', t => {
